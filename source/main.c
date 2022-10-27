@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
             printf("Failed printing play time.\n");
         }
     }
-    printf("Press + to exit.\n");
+    printf("\nPress + to exit.\n");
 
     // Main loop
     while (appletMainLoop())
