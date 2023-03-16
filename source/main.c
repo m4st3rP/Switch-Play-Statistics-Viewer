@@ -7,6 +7,9 @@
 #include <switch.h>
 
 #define NS_APPLICATION_RECORD_SIZE 8192 // the switch currently has about 4000 games
+#define SECONDS_PER_HOUR 3600
+#define NANOSECONDS_PER_MINUTE 60000000000
+#define NANOSECONDS_PER_SECOND 1000000000
 
 Result printPlayTime() {
     Result result = 0;
@@ -64,8 +67,13 @@ Result printPlayTime() {
         }
 
         // print application information
-        u32 playtimeMinutes = pdmPlayStatistics->playtimeMinutes;
-        printf("%s - %dh %dm\n", nacpLanguageEntry->name, playtimeMinutes/60, playtimeMinutes%60);
+        u64 playtimeSeconds = pdmPlayStatistics->playtime / NANOSECONDS_PER_SECOND;
+        u64 playtimeHours = playtimeSeconds / SECONDS_PER_HOUR;
+        playtimeSeconds -= playtimeHours * SECONDS_PER_HOUR;
+        u64 playtimeMinutes = playtimeSeconds / 60;
+        playtimeSeconds -= playtimeMinutes * 60;
+    
+        printf("%s - %02ld:%02ld:%02ld\n", nacpLanguageEntry->name, playtimeHours, playtimeMinutes, playtimeSeconds);
     }
     return result;
 }
