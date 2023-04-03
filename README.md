@@ -4,10 +4,10 @@ This is a Switch Application that shows a selected users play statistics, curren
 
 # Compatibility
 
-SPSV | HOS
------|-----
-1    | 15
-2-3  | 16
+SPSV      | HOS
+----------|----------
+1         | 15
+2 - 3     | 16
 
 # Credits
 
