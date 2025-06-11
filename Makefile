@@ -45,7 +45,8 @@ INCLUDES	:=	include
 #ROMFS	:=	romfs
 APP_TITLE   := Switch Play Statistics Viewer
 APP_AUTHOR  := meesterP
-APP_VERSION := 3
+APP_VERSION := 4
+ICON        := SPSV.jpg
 
 #---------------------------------------------------------------------------------
 # options for code generation
