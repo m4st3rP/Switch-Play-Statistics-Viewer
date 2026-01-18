@@ -12,6 +12,7 @@
 #define SECONDS_PER_HOUR 3600
 #define NANOSECONDS_PER_SECOND 1000000000
 #define SECONDS_PER_MINUTE 60
+#define JSON_OUTPUT_PATH "sdmc:/play_statistics.json"
 
 typedef struct {
     u64 hours;
@@ -35,7 +36,7 @@ Result selectAccount(AccountUid* accountUid, PselUserSelectionSettings* pselUser
     return result;
 }
 
-Result getApplicationData(u64 applicationId, AccountUid accountUid, PdmPlayStatistics* pdmPlayStatistics, NsApplicationControlData* nsApplicationControlData, size_t* actualSize, NacpLanguageEntry** nacpLanguageEntry) {
+Result getApplicationData(u64 applicationId, const AccountUid accountUid, PdmPlayStatistics* pdmPlayStatistics, NsApplicationControlData* nsApplicationControlData, size_t* actualSize, NacpLanguageEntry** nacpLanguageEntry) {
     // get play statistics of application
     Result result = pdmqryQueryPlayStatisticsByApplicationIdAndUserAccountId(applicationId, accountUid, false, pdmPlayStatistics);
     if (R_FAILED(result)) {
@@ -78,7 +79,7 @@ json_t* createJsonEntry(NacpLanguageEntry* nacpLanguageEntry, PdmPlayStatistics*
     // create json object for title
     json_t *stat_obj = json_object();
     if (!stat_obj) {
-        printf("Warning: Failed to create stat object.\n");
+        printf("Failed to create stat object.\n");
         return NULL;
     }
 
@@ -104,16 +105,18 @@ void writeJsonFile(json_t* root_array) {
 
     // write json string to file
     if (json_output_string) {
-        FILE *file = fopen("sdmc:/play_statistics.json", "w");
+        FILE *file = fopen(JSON_OUTPUT_PATH, "w");
         if (file) {
             fprintf(file, "%s", json_output_string);
             fclose(file);
             printf("\nSuccessfully wrote JSON file.\n");
         } else {
-            printf("\nError: Could not open sdmc:/play_statistics.json for writing.\n");
+            printf("Error: Could not open %s for writing.\n", JSON_OUTPUT_PATH);
         }
 
         free(json_output_string);
+    } else {
+        printf("Error: Failed to convert root array to JSON string.\n");
     }
 }
 
@@ -131,7 +134,7 @@ Result printPlayTime() {
     json_t * root_array = json_array();
 
     if (!root_array) {
-        printf("Failed creating json object");
+        printf("Failed creating JSON object.");
         return -1;
     }
 
@@ -143,12 +146,14 @@ Result printPlayTime() {
     // get all installed applications
     result = getInstalledApplications(nsApplicationRecord, &outEntrycount);
     if (R_FAILED(result)) {
+        json_decref(root_array);
         return result;
     }
 
     // select account
     result = selectAccount(&accountUid, &pselUserSelectionSettings);
     if (R_FAILED(result)) {
+        json_decref(root_array);
         return result;
     }
 
@@ -158,6 +163,7 @@ Result printPlayTime() {
         
         result = getApplicationData(applicationId, accountUid, &pdmPlayStatistics, &nsApplicationControlData, &actualSize, &nacpLanguageEntry);
         if (R_FAILED(result)) {
+            json_decref(root_array);
             return result;
         }
 
