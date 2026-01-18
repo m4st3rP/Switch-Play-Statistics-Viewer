@@ -7,7 +7,8 @@ This is a Switch Application that shows a selected users play statistics, curren
 SPSV      | HOS
 ----------|----------
 1         | 15
-2 - 4     | 16<=
+2 - 4     | 16 - 20
+5         | 21 <=
 
 # Credits
 
