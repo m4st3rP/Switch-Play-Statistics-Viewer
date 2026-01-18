@@ -1,6 +1,6 @@
 # Switch-Play-Statistics-Viewer
 
-This is a Switch Application that shows a selected users play statistics, currently just the playtime, for all installed applications.
+This is a Switch Application that shows a selected users play statistics, currently just the playtime, for all installed applications and exports them to a JSON file on the root of the SD card.
 
 # Compatibility
 

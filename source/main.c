@@ -74,11 +74,11 @@ void printGameTime(NacpLanguageEntry* nacpLanguageEntry, PlaytimeConverted playt
     printf("%s - %02ld:%02ld:%02ld\n", nacpLanguageEntry->name, playtime.hours, playtime.minutes, playtime.seconds);
 }
 
-json_t* createJsonEntry(NacpLanguageEntry* nacpLanguageEntry, PdmPlayStatistics* pdmPlayStatistics, int i) {
+json_t* createJsonEntry(NacpLanguageEntry* nacpLanguageEntry, PdmPlayStatistics* pdmPlayStatistics) {
     // create json object for title
     json_t *stat_obj = json_object();
     if (!stat_obj) {
-        printf("Warning: Failed to create stat object for entry %d\n", i);
+        printf("Warning: Failed to create stat object.\n");
         return NULL;
     }
 
@@ -108,9 +108,9 @@ void writeJsonFile(json_t* root_array) {
         if (file) {
             fprintf(file, "%s", json_output_string);
             fclose(file);
-            printf("Successfully wrote JSON file.\n");
+            printf("\nSuccessfully wrote JSON file.\n");
         } else {
-            printf("Error: Could not open sdmc:/play_statistics.json for writing.\n");
+            printf("\nError: Could not open sdmc:/play_statistics.json for writing.\n");
         }
 
         free(json_output_string);
@@ -164,7 +164,7 @@ Result printPlayTime() {
         PlaytimeConverted playtime = convertPlaytime(pdmPlayStatistics);
         printGameTime(nacpLanguageEntry, playtime);
 
-        json_t* jsonEntry = createJsonEntry(nacpLanguageEntry, &pdmPlayStatistics, i);
+        json_t* jsonEntry = createJsonEntry(nacpLanguageEntry, &pdmPlayStatistics);
         if (jsonEntry) {
             json_array_append_new(root_array, jsonEntry);
         }
